@@ -40,6 +40,25 @@ public class GamePanel extends JPanel implements Runnable {
 	// To enable this animation, we need to add a time component; use Thread class()
 	// We will need "GamePanel" to implement "Runnable".
 	Thread gameThread;
+	
+	// Constructor for GamePanel
+	public GamePanel() {
+		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
+		this.setBackground(Color.black);
+		
+		/* setDoubleBuffered() -> if true, all the drawing from this component will be done in an offscreen painting buffer
+		 * Enabling can improve game's rendering performance.
+		 */
+		this.setDoubleBuffered(true);
+		
+	}
+	
+	public void startGameThread() {
+		// instantiate and pass in "this" which represents our class: "GamePanel"
+		gameThread = new Thread(this);
+		// auto calls the run() method
+		gameThread.start();
+	}
 
 	@Override
 	public void run() {
@@ -50,6 +69,13 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		// We will use this to create a game loop.
 		
+		
+		// As long as this gameThread exists, the process in the while loop repeats.
+		while(gameThread != null) {
+			
+			System.out.println("The game loop is running.");
+			
+		}
 		
 	}
 	
