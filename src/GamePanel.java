@@ -15,9 +15,6 @@ public class GamePanel extends JPanel implements Runnable {
 	// 16x16 tile (default size of the player character, NPCs, map tiles, etc).
 	final int originalTileSize = 16;
 	
-	/* Modern PCs have much larger resolutions than the original NES, so 16x16 may look very small on a modern PC
-	 * NES resolution was (256 x 224), so (16 x 16) was fine
-	 * */
 	
 	// We can scale our 16x16 tile by 3 -> (16x3 = 48)
 	final int scale = 3;
@@ -36,10 +33,20 @@ public class GamePanel extends JPanel implements Runnable {
 	// FPS
 	int FPS = 60;
 	
-	// @ 60FPS, the screen updates itself 60 times per second; we perceive as movement/animation.
-	// To enable this animation, we need to add a time component; use Thread class()
-	// We will need "GamePanel" to implement "Runnable".
+	
+	// Instantiate the KeyHandler
+	KeyHandler keyH = new KeyHandler();
+	
+	
 	Thread gameThread;
+	
+	// Set player's default position
+	int playerX = 100;
+	int playerY = 100;
+	int playerSpeed = 4;
+	
+	
+	
 	
 	// Constructor for GamePanel
 	public GamePanel() {
@@ -51,10 +58,15 @@ public class GamePanel extends JPanel implements Runnable {
 		 */
 		this.setDoubleBuffered(true);
 		
+		// add KeyListener
+		this.addKeyListener(keyH);
+		
+		// GamePanel "focused" to receive key input
+		this.setFocusable(true);
+		
 	}
 	
 	public void startGameThread() {
-		// instantiate and pass in "this" which represents our class: "GamePanel"
 		gameThread = new Thread(this);
 		// auto calls the run() method
 		gameThread.start();
@@ -62,20 +74,85 @@ public class GamePanel extends JPanel implements Runnable {
 
 	@Override
 	public void run() {
-		// We need to override this method for "Runnable" interface
-		 /* An object implementing interface "Runnable" is used to create a thread.
-		  * Starting the thread causes the object's run() method to be called.
-		 */
+
+		double drawInterval = 1000000000/ FPS;
+		// When we hit "nextDrawTime", draw the screen again.
+		double nextDrawTime = System.nanoTime() + drawInterval;
 		
-		// We will use this to create a game loop.
-		
-		
-		// As long as this gameThread exists, the process in the while loop repeats.
 		while(gameThread != null) {
 			
-			System.out.println("The game loop is running.");
+//			System.out.println("The game loop is running.");
 			
+			
+			 long currentTime = System.nanoTime();
+			 System.out.println("Current time: " + currentTime);
+			 
+			
+			update();
+			
+			repaint();
+			
+			try {
+				double remainingTime = nextDrawTime - System.nanoTime();
+
+				remainingTime = remainingTime / 1000000;
+				
+				if(remainingTime < 0) {
+					remainingTime = 0;
+				}
+				
+				Thread.sleep((long) remainingTime);
+				
+				// Set NEW "nextDrawTime"
+				nextDrawTime += drawInterval;
+				
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		
+	}
+	
+	// Update player position
+	public void update() {
+
+		if(keyH.upPressed == true) {
+			playerY -= playerSpeed;
+		}
+		else if(keyH.downPressed == true) {
+			playerY += playerSpeed;
+		}
+		else if(keyH.leftPressed == true) {
+			playerX -= playerSpeed;
+		}
+		else if(keyH.rightPressed == true) {
+			playerX += playerSpeed;
+		}
+			
+	}
+	
+	
+	// Java built-in method for drawing on JPanel
+	// Use the "Graphics" class -. provides functions to draw objects on the screen. Like a pencil or paint brush
+	public void paintComponent(Graphics g) {
+		// Whenever we use paintComponent(), we NEED to type super.paintComponent().
+		// "super" means the parent class(JPanel) of this class(GamePanel)
+		super.paintComponent(g);
+		
+		/* Graphics2D extends Graphics
+		 * Convert Graphics to Graphics2D(more functionality)
+		 */
+		Graphics g2 = (Graphics2D)g;
+		
+		// Set color to use for drawing objects.
+		g2.setColor(Color.white);
+		
+		// Draws a rectangle and fills it w/ the specified color.(x, y, width, height)
+		g2.fillRect(playerX, playerY, tileSize, tileSize);
+		
+		// When done drawing, use dispose() to release any system resources in use for this graphic context.
+		g2.dispose();
 		
 	}
 	

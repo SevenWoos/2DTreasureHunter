@@ -114,3 +114,6 @@ local.properties
 
 # Java Files
 rekt.java
+
+# Folders to Ignore
+AltCode/
