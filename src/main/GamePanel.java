@@ -1,6 +1,8 @@
 package main;
 import javax.swing.JPanel;
 
+import entity.Player;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -21,7 +23,7 @@ public class GamePanel extends JPanel implements Runnable {
 	final int scale = 3;
 	
 	// 48x48 tile(single tile is 48 pixels)
-	final int tileSize = originalTileSize * scale;
+	public final int tileSize = originalTileSize * scale;
 	
 	// How many tiles do we want to display on the screen horizontally and vertically? (16x12) = (4x3) ratio.
 	final int maxScreenCol = 16;
@@ -38,8 +40,12 @@ public class GamePanel extends JPanel implements Runnable {
 	// Instantiate the KeyHandler
 	KeyHandler keyH = new KeyHandler();
 	
-	
+	// Instantiate gameThread
 	Thread gameThread;
+	
+	// Instantiate Player
+	Player player = new Player(this, keyH);
+	
 	
 	// Set player's default position
 	int playerX = 100;
@@ -117,20 +123,8 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	// Update player position
 	public void update() {
-
-		if(keyH.upPressed == true) {
-			playerY -= playerSpeed;
-		}
-		else if(keyH.downPressed == true) {
-			playerY += playerSpeed;
-		}
-		else if(keyH.leftPressed == true) {
-			playerX -= playerSpeed;
-		}
-		else if(keyH.rightPressed == true) {
-			playerX += playerSpeed;
-		}
-			
+		// Call Plater update method
+		player.update();	
 	}
 	
 	
@@ -146,11 +140,8 @@ public class GamePanel extends JPanel implements Runnable {
 		 */
 		Graphics g2 = (Graphics2D)g;
 		
-		// Set color to use for drawing objects.
-		g2.setColor(Color.white);
-		
-		// Draws a rectangle and fills it w/ the specified color.(x, y, width, height)
-		g2.fillRect(playerX, playerY, tileSize, tileSize);
+		// Call Player draw method
+		player.draw(g2);
 		
 		// When done drawing, use dispose() to release any system resources in use for this graphic context.
 		g2.dispose();
