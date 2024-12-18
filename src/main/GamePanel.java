@@ -2,6 +2,7 @@ package main;
 import javax.swing.JPanel;
 
 import entity.Player;
+import tile.TileManager;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -26,16 +27,19 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int tileSize = originalTileSize * scale;
 	
 	// How many tiles do we want to display on the screen horizontally and vertically? (16x12) = (4x3) ratio.
-	final int maxScreenCol = 16;
-	final int maxScreenRow = 12;
+	public final int maxScreenCol = 16;
+	public final int maxScreenRow = 12;
 	
-	final int screenWidth = tileSize * maxScreenCol; // 768 pixels(48x16) horizontal
-	final int screenHeight = tileSize * maxScreenRow; // 576 pixels(48x12) vertical
+	public final int screenWidth = tileSize * maxScreenCol; // 768 pixels(48x16) horizontal
+	public final int screenHeight = tileSize * maxScreenRow; // 576 pixels(48x12) vertical
 	
 	
 	// FPS
 	int FPS = 60;
 	
+	
+	// Instantiate TileManager
+	TileManager tileM = new TileManager(this);
 	
 	// Instantiate the KeyHandler
 	KeyHandler keyH = new KeyHandler();
@@ -47,20 +51,13 @@ public class GamePanel extends JPanel implements Runnable {
 	Player player = new Player(this, keyH);
 	
 	
-	// Set player's default position
-	int playerX = 100;
-	int playerY = 100;
-	int playerSpeed = 4;
-	
-	
-	
 	
 	// Constructor for GamePanel
 	public GamePanel() {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
 		this.setBackground(Color.black);
 		
-		/* setDoubleBuffered() -> if true, all the drawing from this component will be done in an offscreen painting buffer
+		/* setDoubleBuffered() -> if true, all the drawing from this component will be done in an offscreen painting buffer.
 		 * Enabling can improve game's rendering performance.
 		 */
 		this.setDoubleBuffered(true);
@@ -123,13 +120,13 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	// Update player position
 	public void update() {
-		// Call Plater update method
+		// Call Player update method
 		player.update();	
 	}
 	
 	
 	// Java built-in method for drawing on JPanel
-	// Use the "Graphics" class -. provides functions to draw objects on the screen. Like a pencil or paint brush
+	// Use the "Graphics" class -> provides functions to draw objects on the screen. Like a pencil or paint brush
 	public void paintComponent(Graphics g) {
 		// Whenever we use paintComponent(), we NEED to type super.paintComponent().
 		// "super" means the parent class(JPanel) of this class(GamePanel)
@@ -139,6 +136,9 @@ public class GamePanel extends JPanel implements Runnable {
 		 * Convert Graphics to Graphics2D(more functionality)
 		 */
 		Graphics g2 = (Graphics2D)g;
+		
+		// Call Tile draw method. Draw tiles BEFORE player
+		tileM.draw((Graphics2D) g2);
 		
 		// Call Player draw method
 		player.draw(g2);
