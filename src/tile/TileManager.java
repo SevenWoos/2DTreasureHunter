@@ -27,11 +27,11 @@ public class TileManager {
 		
 		// An array of 10 tiles
 		tile = new Tile[10];
-		mapTileNum = new int[gp.maxScreenCol][gp.maxScreenCol];
+		mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 		
 		getTileImage();
 		
-		loadMap("/maps/map01.txt");
+		loadMap("/maps/world01.txt");
 	}
 	
 	
@@ -73,13 +73,13 @@ public class TileManager {
 			int col = 0;
 			int row = 0;
 			
-			while(col < gp.maxScreenCol && row < gp.maxScreenRow) {
+			while(col < gp.maxWorldCol && row < gp.maxWorldRow) {
 				// We will read the text file in this loop
 				
 				// reads a single line of text and saves into a variable
 				String line = br.readLine();
 				 
-				while(col < gp.maxScreenCol) {
+				while(col < gp.maxWorldCol) {
 					// Split line to get each number
 					String numbers[] = line.split(" "); 
 					// Convert from string to integer
@@ -90,7 +90,7 @@ public class TileManager {
 					col++;	
 				}
 				
-				if(col == gp.maxScreenCol) {
+				if(col == gp.maxWorldCol) {
 					col = 0;
 					row++;
 				}
@@ -106,33 +106,38 @@ public class TileManager {
 	}
 	
 	
-	
 	public void draw(Graphics2D g2) {
-		//g2.drawImage(tile[1].image, 0, 0, gp.tileSize, gp.tileSize, null);
-		//g2.drawImage(tile[1].image, 48, 0, gp.tileSize, gp.tileSize, null);
 		
-		// We can also create a map data with a text file
+		int worldCol = 0;
+		int worldRow = 0;
 		
-		int col = 0;
-		int row = 0;
-		int x = 0;
-		int y = 0;
-		
-		while(col < gp.maxScreenCol && row < gp.maxScreenCol) {
+		while(worldCol < gp.maxWorldCol && worldRow < gp.maxWorldRow) {
 			
 			// Tile starts at (0, 0) in our map txt file. (If 0, will draw grass, 1 will draw wall, 2 will draw water)
-			int tileNum = mapTileNum[col][row];
+			int tileNum = mapTileNum[worldCol][worldRow];
 			
-			g2.drawImage(tile[tileNum].image, x, y, gp.tileSize, gp.tileSize, null);
-			col++;
-			x += gp.tileSize;
+			// "worldX" and "worldY" = positions on the MAP.
+			int worldX = worldCol * gp.tileSize;
+			int worldY = worldRow * gp.tileSize;
+			// "screenX" and "screenY" = where on the screen we draw the world tiles.
+			int screenX = worldX - gp.player.worldX + gp.player.screenX;
+			int screenY = worldY - gp.player.worldY + gp.player.screenY;
 			
 			
-			if(col == gp.maxScreenCol) {
-				col = 0;
-				x = 0;
-				row++;
-				y += gp.tileSize;
+			// We want to draw only the tiles we CAN SEE. It is less efficient to draw tiles we cannot see.
+			if(worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
+				worldX - gp.tileSize < gp.player.worldX + gp.player.screenX && 
+				worldY + gp.tileSize > gp.player.worldY - gp.player.screenY && 
+				worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
+				g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+			}
+		
+			worldCol++;
+			
+			
+			if(worldCol == gp.maxWorldCol) {
+				worldCol = 0;
+				worldRow++;
 			}
 		}
 		

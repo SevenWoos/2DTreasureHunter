@@ -15,22 +15,35 @@ public class Player extends Entity {
 	GamePanel gp;
 	KeyHandler keyH;
 	
+	// We will place character in center of screen and scroll the background as he moves.
+	// screenX and screenY do NOT change throughout the game(final)
+	public final int screenX;
+	public final int screenY;
 	
 	public Player(GamePanel gp, KeyHandler keyH) {
 		
 		this.gp = gp;
 		this.keyH = keyH;
 		
+		// Half of the screen width and half the screen height so we can draw character in the center...
+		// ...Subtract a half tile length to adjust for the drawing starting after the TOP LEFT CORNER of the image.
+		screenX = gp.screenWidth/2 - (gp.tileSize/2);
+		screenY = gp.screenHeight/2 - (gp.tileSize/2);
+		
 		setDefaultValues();
 		getPlayerImage();
 	}
 	
 	public void setDefaultValues() {
-		
-		 x = 100;
-		 y = 100;
-		 speed = 4;
-		 direction = "down";
+		//Roughly the center of our map. The player's spawn location.
+		worldX = gp.tileSize * 23;
+		worldY = gp.tileSize * 21;
+//		worldX = gp.tileSize * 0;
+//		worldY = gp.tileSize * 0;
+//		worldX = gp.tileSize * 49;
+//		worldY = gp.tileSize * 49;
+		speed = 4;
+		direction = "down";
 		
 	}
 	
@@ -61,19 +74,19 @@ public class Player extends Entity {
 			
 			if(keyH.upPressed == true) {
 				direction = "up";
-				y -= speed;
+				worldY -= speed;
 			}
 			else if(keyH.downPressed == true) {
 				direction = "down";
-				y += speed;
+				worldY += speed;
 			}
 			else if(keyH.leftPressed == true) {
 				direction = "left";
-				x -= speed;
+				worldX -= speed;
 			}
 			else if(keyH.rightPressed == true) {
 				direction = "right";
-				x += speed;
+				worldX += speed;
 			}
 			
 			spriteCounter++;
@@ -136,7 +149,7 @@ public class Player extends Entity {
 		}
 		
 		// Set ImageObserver to null
-		g2.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
+		g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
 		
 	}
 }

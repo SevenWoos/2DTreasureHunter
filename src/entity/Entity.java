@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 // Stores variables that will be used in Player, Monster, and NPC classes.
 public class Entity {
 
-	public int x, y;
+	public int worldX, worldY;
 	public int speed;
 	
 	// BufferedImage describes an image with an accessible buffer of image data(used to store image files).
