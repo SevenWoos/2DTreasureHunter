@@ -55,6 +55,9 @@ public class GamePanel extends JPanel implements Runnable {
 	// Instantiate gameThread
 	Thread gameThread;
 	
+	// Instantiate CollisionChecker
+	public CollisionChecker cChecker = new CollisionChecker(this);
+	
 	// Instantiate Player
 	public Player player = new Player(this, keyH);
 	

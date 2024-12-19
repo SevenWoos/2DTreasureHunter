@@ -2,6 +2,7 @@ package entity;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -30,8 +31,23 @@ public class Player extends Entity {
 		screenX = gp.screenWidth/2 - (gp.tileSize/2);
 		screenY = gp.screenHeight/2 - (gp.tileSize/2);
 		
+		// args = (x, y, width, height)
+		// We want the rectangle to be SMALLER than our character
+//		solidArea = new Rectangle(0, 0, gp.tileSize, gp.tileSize);
+		solidArea = new Rectangle();
+		solidArea.x = 8;
+		solidArea.y = 16;
+		solidArea.width = 32;
+		solidArea.height = 32;
+		
+		
 		setDefaultValues();
 		getPlayerImage();
+		
+//		System.out.println(worldX + solidArea.x);
+//		System.out.println(worldX + solidArea.x + solidArea.width);
+//		System.out.println(worldY + solidArea.y);
+//		System.out.println(worldY + solidArea.y + solidArea.height);
 	}
 	
 	public void setDefaultValues() {
@@ -74,19 +90,43 @@ public class Player extends Entity {
 			
 			if(keyH.upPressed == true) {
 				direction = "up";
-				worldY -= speed;
 			}
 			else if(keyH.downPressed == true) {
 				direction = "down";
-				worldY += speed;
+				
 			}
 			else if(keyH.leftPressed == true) {
 				direction = "left";
-				worldX -= speed;
+				
 			}
 			else if(keyH.rightPressed == true) {
 				direction = "right";
-				worldX += speed;
+				
+			}
+			
+			
+			// CHECK TILE COLLISION 
+			collisionOn = false;
+			gp.cChecker.checkTile(this);
+			
+			
+			// IF COLLISION IS FALSE, PLAYER CAN MOVE
+			if(collisionOn == false) {
+				
+				switch(direction) {
+				case "up":
+					worldY -= speed;
+					break;
+				case "down":
+					worldY += speed;
+					break;
+				case "left":
+					worldX -= speed;
+					break;
+				case "right":
+					worldX += speed;
+					break;
+				}
 			}
 			
 			spriteCounter++;
