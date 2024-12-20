@@ -2,6 +2,7 @@ package main;
 import javax.swing.JPanel;
 
 import entity.Player;
+import object.SuperObject;
 import tile.TileManager;
 
 import java.awt.Color;
@@ -58,9 +59,14 @@ public class GamePanel extends JPanel implements Runnable {
 	// Instantiate CollisionChecker
 	public CollisionChecker cChecker = new CollisionChecker(this);
 	
+	// Instantiate AssetSetter
+	public AssetSetter aSetter = new AssetSetter(this);
+	
 	// Instantiate Player
 	public Player player = new Player(this, keyH);
 	
+	// Instantiate SuperObject array
+	public SuperObject obj[] = new SuperObject[10];
 	
 	
 	// Constructor for GamePanel
@@ -79,6 +85,10 @@ public class GamePanel extends JPanel implements Runnable {
 		// GamePanel "focused" to receive key input
 		this.setFocusable(true);
 		
+	}
+	
+	public void setUpGame() {
+		aSetter.setObject();
 	}
 	
 	public void startGameThread() {
@@ -140,16 +150,20 @@ public class GamePanel extends JPanel implements Runnable {
 	// Use the "Graphics" class -> provides functions to draw objects on the screen. Like a pencil or paint brush
 	public void paintComponent(Graphics g) {
 		// Whenever we use paintComponent(), we NEED to type super.paintComponent().
-		// "super" means the parent class(JPanel) of this class(GamePanel)
 		super.paintComponent(g);
 		
-		/* Graphics2D extends Graphics
-		 * Convert Graphics to Graphics2D(more functionality)
-		 */
 		Graphics g2 = (Graphics2D)g;
 		
 		// Call Tile draw method. Draw tiles BEFORE player
 		tileM.draw((Graphics2D) g2);
+		
+		//OBJECT
+		// Loop through our object array
+		for(int i = 0; i < obj.length; i++) {
+			if(obj[i] != null) {
+				obj[i].draw((Graphics2D) g2, this);
+			}
+		}
 		
 		// Call Player draw method
 		player.draw(g2);
