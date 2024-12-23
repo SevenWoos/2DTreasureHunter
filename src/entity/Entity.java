@@ -18,5 +18,7 @@ public class Entity {
 	
 	// We will use this class to set parts of our Player's character to be solid
 	public Rectangle solidArea;
+	
+	public int solidAreaDefaultX, solidAreaDefaultY;
 	public boolean collisionOn = false;
 }

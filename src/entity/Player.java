@@ -21,6 +21,9 @@ public class Player extends Entity {
 	public final int screenX;
 	public final int screenY;
 	
+	// How many keys Player currently has
+	int hasKey = 0;
+	
 	public Player(GamePanel gp, KeyHandler keyH) {
 		
 		this.gp = gp;
@@ -37,6 +40,8 @@ public class Player extends Entity {
 		solidArea = new Rectangle();
 		solidArea.x = 8;
 		solidArea.y = 16;
+		solidAreaDefaultX = solidArea.x;
+		solidAreaDefaultY = solidArea.y;
 		solidArea.width = 32;
 		solidArea.height = 32;
 		
@@ -110,6 +115,11 @@ public class Player extends Entity {
 			gp.cChecker.checkTile(this);
 			
 			
+			// CHECK OBJECT COLLISION
+			int objIndex = gp.cChecker.checkObject(this, true);
+			pickUpObject(objIndex);
+			
+			
 			// IF COLLISION IS FALSE, PLAYER CAN MOVE
 			if(collisionOn == false) {
 				
@@ -143,6 +153,37 @@ public class Player extends Entity {
 		}
 		
 	}
+	
+	public void pickUpObject(int i) {
+		
+		// If index is 999, that means we didn't hit any object.
+		if(i != 999) {
+			
+			
+			String objectName = gp.obj[i].name;
+			
+			switch(objectName) {
+			case "Key":
+				hasKey++;
+				// Deletes the object we just hit
+				gp.obj[i] = null;
+				System.out.println("Key: " + hasKey);
+				break;
+			case "Door":
+				// Check if player has key
+				if(hasKey > 0) {
+					gp.obj[i] = null;
+					hasKey--;
+				}
+				System.out.println("Key: " + hasKey);
+				break;
+			case "Chest":
+				break;
+			}
+			
+		}
+	}
+	
 	
 	public void draw(Graphics g2) {
 		// Set color to use for drawing objects.
